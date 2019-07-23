@@ -134,8 +134,20 @@ class FencedBlockPreprocessor(Preprocessor):
                         kv_pairs = ''.join(
                             f' {k}="{_escape_attrib_html(v)}"' for k, v in config.items() if k != 'use_pygments'
                         )
+                    if "hl_lines" in config:
+                        dataline_attr = ' data-line="%s"' % config['hl_lines']
+                    else:
+                        dataline_attr = ""
+                    if "filename" in config:
+                        filename_tag = '<div class="filename">File: %s</div>' % config['filename']
+                    else:
+                        filename_tag = ""
+                    if 'copy_btn' in config:
+                        copy_btn = '<button class="copy-btn">Copy</button>'
+                    else:
+                        copy_btn = ''
                     code = self._escape(m.group('code'))
-                    code = f'<pre{id_attr}{class_attr}><code{lang_attr}{kv_pairs}>{code}</code></pre>'
+                    code = f'<pre{dataline_attr}{id_attr}{class_attr}>{filename_tag}{copy_btn}<code{lang_attr}{kv_pairs}>{code}</code></pre>'
 
                 placeholder = self.md.htmlStash.store(code)
                 text = f'{text[:m.start()]}\n{placeholder}\n{text[m.end():]}'
@@ -154,7 +166,10 @@ class FencedBlockPreprocessor(Preprocessor):
             elif k == '.':
                 classes.append(v)
             elif k == 'hl_lines':
-                configs[k] = parse_hl_lines(v)
+                hl_lines = parse_hl_lines(v)
+                if not hl_lines:
+                    hl_lines = v
+                configs[k] = hl_lines
             elif k in self.bool_options:
                 configs[k] = parseBoolValue(v, fail_on_errors=False, preserve_none=True)
             else:
