@@ -43,8 +43,8 @@ class FencedBlockPreprocessor(Preprocessor):
 }?[ ]*\n                                # Optional closing }
 (?P<code>.*?)(?<=\n)
 (?P=fence)[ ]*$''', re.MULTILINE | re.DOTALL | re.VERBOSE)
-    CODE_WRAP = '<pre><code%s>%s</code></pre>'
-    LANG_TAG = ' class="%s"'
+    CODE_WRAP = '<pre %s><code%s>%s</code></pre>'
+    LANG_TAG = ' class="language-%s"'
 
     def __init__(self, md):
         super(FencedBlockPreprocessor, self).__init__(md)
@@ -89,7 +89,13 @@ class FencedBlockPreprocessor(Preprocessor):
 
                     code = highliter.hilite()
                 else:
-                    code = self.CODE_WRAP % (lang,
+                    hl_lines = m.group("hl_lines")
+                    if hl_lines:
+                        pre_attributes = 'data-line="%s"' % hl_lines
+                    else:
+                        pre_attributes = ""
+                    code = self.CODE_WRAP % (pre_attributes,
+                                             lang,
                                              self._escape(m.group('code')))
 
                 placeholder = self.markdown.htmlStash.store(code, safe=True)
