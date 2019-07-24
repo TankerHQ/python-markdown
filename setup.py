@@ -44,7 +44,8 @@ dev_status_map = {
     'alpha': '3 - Alpha',
     'beta':  '4 - Beta',
     'rc':    '4 - Beta',
-    'final': '5 - Production/Stable'
+    'final': '5 - Production/Stable',
+    'post':  '5 - Production/Stable'
 }
 DEVSTATUS = dev_status_map[__version_info__[3]]
 

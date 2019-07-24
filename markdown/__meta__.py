@@ -26,13 +26,13 @@ License: BSD (see LICENSE.md for details).
 # (1, 2, 0, 'beta', 2) => "1.2b2"
 # (1, 2, 0, 'rc', 4) => "1.2rc4"
 # (1, 2, 0, 'final', 0) => "1.2"
-__version_info__ = (3, 3, 7, 'final', 0)
+__version_info__ = (3, 3, 7, 'post', 1)
 
 
 def _get_version(version_info):
     " Returns a PEP 440-compliant version number from version_info. "
     assert len(version_info) == 5
-    assert version_info[3] in ('dev', 'alpha', 'beta', 'rc', 'final')
+    assert version_info[3] in ('dev', 'alpha', 'beta', 'rc', 'final', 'post')
 
     parts = 2 if version_info[2] == 0 else 3
     v = '.'.join(map(str, version_info[:parts]))
@@ -40,7 +40,7 @@ def _get_version(version_info):
     if version_info[3] == 'dev':
         v += '.dev' + str(version_info[4])
     elif version_info[3] != 'final':
-        mapping = {'alpha': 'a', 'beta': 'b', 'rc': 'rc'}
+        mapping = {'alpha': 'a', 'beta': 'b', 'rc': 'rc', 'post': '.post'}
         v += mapping[version_info[3]] + str(version_info[4])
 
     return v
