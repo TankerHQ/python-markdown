@@ -18,7 +18,8 @@ def get_version():
         'alpha': '3 - Alpha',
         'beta':  '4 - Beta',
         'rc':    '4 - Beta',
-        'final': '5 - Production/Stable'
+        'final': '5 - Production/Stable',
+        'post':  '5 - Production/Stable'
     }
     if v.version_info[3] == 'alpha' and v.version_info[4] == 0:
         status = '2 - Pre-Alpha'
