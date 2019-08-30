@@ -38,12 +38,16 @@ class FencedBlockPreprocessor(Preprocessor):
     FENCED_BLOCK_RE = re.compile(r'''
 (?P<fence>^(?:~{3,}|`{3,}))[ ]*         # Opening ``` or ~~~
 (\{?\.?(?P<lang>[\w#.+-]*))?[ ]*        # Optional {, and lang
+# Optional file name header
+(filename=(?P<fquot>"|')(?P<filename>.*?)(?P=fquot))?[ ]*
 # Optional highlight lines, single- or double-quote-delimited
-(hl_lines=(?P<quot>"|')(?P<hl_lines>.*?)(?P=quot))?[ ]*
+(hl_lines=(?P<hquot>"|')(?P<hl_lines>.*?)(?P=hquot))?[ ]*
+# Optional copy button
+(?P<copy_btn>copy_btn)?[ ]*
 }?[ ]*\n                                # Optional closing }
 (?P<code>.*?)(?<=\n)
 (?P=fence)[ ]*$''', re.MULTILINE | re.DOTALL | re.VERBOSE)
-    CODE_WRAP = '<pre %s><code%s>%s</code></pre>'
+    CODE_WRAP = '<pre %s>%s<code%s>%s</code></pre>'
     LANG_TAG = ' class="language-%s"'
 
     def __init__(self, md):
@@ -94,7 +98,17 @@ class FencedBlockPreprocessor(Preprocessor):
                         pre_attributes = 'data-line="%s"' % hl_lines
                     else:
                         pre_attributes = ""
+                    filename = m.group("filename")
+                    if filename:
+                        filename_tag = '<div class="filename">File: %s</div>' % filename
+                    else:
+                        filename_tag = ""
+                    if m.group("copy_btn"):
+                        copy_btn = '<button class="copy-btn">Copy</button>'
+                    else:
+                        copy_btn = ''
                     code = self.CODE_WRAP % (pre_attributes,
+                                             filename_tag + copy_btn,
                                              lang,
                                              self._escape(m.group('code')))
 
